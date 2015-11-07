@@ -90,11 +90,13 @@ function generateDynamicImageSrc(index) {
   }
   var height = getDynamicHeight();
   var isPortrait = booleanToss();
+  var width = getDynamicWidth(height, isPortrait);
+  parts.push(width);
   parts.push(height);
-  parts.push(getDynamicWidth(height, isPortrait));
-  var small = 100;
-  preview.push(small);
-  preview.push(getDynamicWidth(small, isPortrait));
+  var smallWidth = 100;
+  preview.push(smallWidth);
+  var smallHeight = getDynamicWidth(smallWidth, isPortrait);
+  preview.push(smallHeight);
   var cat = CATEGORIES[getCategoryIndex()];
   parts.push(cat);
   preview.push(cat);
@@ -104,7 +106,11 @@ function generateDynamicImageSrc(index) {
   return {
     large: parts.join('/'),
     small: preview.join('/'),
-    id: generateImageId(index)
+    id: generateImageId(index),
+    width: width,
+    height: height,
+    previewWidth: smallWidth,
+    previewHeight: smallHeight
   };
 }
 
