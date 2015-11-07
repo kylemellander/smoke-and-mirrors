@@ -567,7 +567,7 @@ export default Mixin.create(SmartActionsMixin, keyForItem, {
   setupHandlers() {
     let resizeDebounce = this.resizeDebounce;
     let container = this._container;
-    let onScrollMethod = (dY, dX) => {
+    let onScrollMethod = (dY) => {
       if (!this.__isInitialized || this._isPrepending) { return; }
       this.set('_scrollIsForward', dY > 0);
       this._sm_scheduleUpdate('scroll');
