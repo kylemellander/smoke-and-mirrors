@@ -18,10 +18,8 @@ class Satellite {
     }
   }
 
-
   heightDidChange(/* delta */) {}
   widthDidChange(/* delta */) {}
-
 
   resize() {
     let cached = this.geography.getState();
@@ -40,16 +38,11 @@ class Satellite {
     return heightChange || widthChange ? { dX: widthChange, dY: heightChange } : null;
   }
 
-
   shift(dY, dX) {
-    if (dX) {
-      this.geography.left -= dX;
-      this.geography.right -= dX;
-    }
-    if (dY) {
-      this.geography.bottom -= dY;
-      this.geography.top -= dY;
-    }
+    this.geography.left -= dX;
+    this.geography.right -= dX;
+    this.geography.bottom -= dY;
+    this.geography.top -= dY;
   }
 
   destroy() {
