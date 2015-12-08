@@ -33,7 +33,7 @@ export default Mixin.create({
       return {};
     }
 
-    // segment top break points
+    // segment start break points
     this.radar.planet.setState();
 
     const bufferSize = Number(this.get('bufferSize'));

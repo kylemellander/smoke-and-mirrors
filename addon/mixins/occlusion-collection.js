@@ -38,7 +38,7 @@ export default Mixin.create({
   containerSelector: null,
 
   /*
-   * The name of the view to render either above or below the existing content when
+   * The name of the view to render either before or after the existing content when
    * more items are being loaded.  For more information about how and when this is
    * used, see the `Actions` section below.
    *
@@ -133,7 +133,7 @@ export default Mixin.create({
    * The promise should be resolved once any loading is complete, or
    * rejected if loading has failed.
    *
-   * If `loadingComponentClass` is defined, it will be inserted above existing content.
+   * If `loadingComponentClass` is defined, it will be inserted before existing content.
    *
    * Rejecting the promise leaves the loadingComponent in place for 5s and set's
    * it's `loadingFailed` property to true.
@@ -162,7 +162,7 @@ export default Mixin.create({
    * The promise should be resolved once any loading is complete, or
    * rejected if loading has failed.
    *
-   * If `loadingViewClass` is defined, it will be inserted above existing content.
+   * If `loadingViewClass` is defined, it will be inserted before existing content.
    *
    * Rejecting the promise leaves the loadingView in place for 5s and set's
    * it's `loadingFailed` property to true.
@@ -504,7 +504,7 @@ export default Mixin.create({
         break;
       }
 
-      // above the start invisible boundary
+      // before the start invisible boundary
       if (componentLast < edges.invisibleStart) {
         toCull.push(component);
 
