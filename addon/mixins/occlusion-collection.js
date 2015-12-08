@@ -26,7 +26,7 @@ export default Mixin.create({
   // –––––––––––––– Optional Settings
   /*
    * A jQuery selector string that will select the element from
-   * which to calculate the viewable height and needed offsets.
+   * which to calculate the viewable height (or width) and needed offsets.
    *
    * This element will also have the `scroll` event handler added to it.
    *
@@ -316,6 +316,7 @@ export default Mixin.create({
   },
 
   __smActionCache: null,
+  // TO CHANGE
   __smIsLoadingAbove: false,
   __smIsLoadingBelow: false,
   sendActionOnce(name, context) {
@@ -384,9 +385,9 @@ export default Mixin.create({
 
       // in case of not full-window scrolling
       let component = childComponents[midIndex];
-      let componentBottom = component.satellite.geography.bottom;
+      let componentEnd = this.dimVertical ? component.satellite.geography.bottom : component.satellite.geography.right;
 
-      if (componentBottom > invisibleTop) {
+      if (componentEnd > invisibleTop) {
         maxIndex = midIndex - 1;
       } else {
         minIndex = midIndex + 1;
@@ -424,8 +425,8 @@ export default Mixin.create({
     }
   },
 
-  __smSpacerAboveHeight: 0,
-  __smSpacerBelowHeight: 0,
+  __smSpacerBeforeVal: 0,
+  __smSpacerAfterVal: 0,
 
   _removeComponents(toCull, toHide) {
     toCull.forEach((v) => {
@@ -438,8 +439,8 @@ export default Mixin.create({
 
   /*
    *
-   * The big question is can we render from the bottom
-   * without the bottom most item being taken off screen?
+   * The big question is can we render from the end
+   * without the last item being taken off screen?
    *
    * Triggers on scroll.
    *
@@ -476,101 +477,101 @@ export default Mixin.create({
 
     }
 
-    let currentViewportBound = this.radar.skyline.top;
-    let currentUpperBound = edges.invisibleTop;
+    let currentViewportBound = this.dimVertical ? this.radar.skyline.top : this.radar.skyline.left;
+    let currentFirstBound = this.dimVertical ? edges.invisibleTop : edges.invisibleLeft;
 
-    if (currentUpperBound < currentViewportBound) {
-      currentUpperBound = currentViewportBound;
+    if (currentFirstBound < currentViewportBound) {
+      currentFirstBound = currentViewportBound;
     }
 
-    let topComponentIndex = this._findFirstRenderedComponent(currentUpperBound);
-    let bottomComponentIndex = topComponentIndex;
+    let firstComponentIndex = this._findFirstRenderedComponent(currentFirstBound);
+    let lastComponentIndex = firstComponentIndex;
     let lastIndex = childComponents.length - 1;
-    let topVisibleSpotted = false;
+    let firstVisibleSpotted = false;
     let toCull = [];
     let toHide = [];
     let toShow = [];
 
-    while (bottomComponentIndex <= lastIndex) {
+    while (lastComponentIndex <= lastIndex) {
 
-      let component = childComponents[bottomComponentIndex];
+      let component = childComponents[lastComponentIndex];
 
-      let componentTop = component.satellite.geography.top;
-      let componentBottom = component.satellite.geography.bottom;
+      let componentFirst = this.dimVertical ? component.satellite.geography.top : component.satellite.geography.left;
+      let componentLast = this.dimVertical ? component.satellite.geography.bottom : component.satellite.geography.right;
 
       // end the loop if we've reached the end of components we care about
-      if (componentTop > edges.invisibleBottom) {
+      if (componentFirst > edges.invisibleEnd) {
         break;
       }
 
-      // above the upper invisible boundary
-      if (componentBottom < edges.invisibleTop) {
+      // above the start invisible boundary
+      if (componentLast < edges.invisibleStart) {
         toCull.push(component);
 
-        // above the upper reveal boundary
-      } else if (componentBottom < edges.visibleTop) {
+        // before the start reveal boundary
+      } else if (componentLast < edges.visibleStart) {
         toHide.push(component);
 
-        // above the upper screen boundary
-      } else if (componentBottom < edges.viewportTop) {
+        // before the start screen boundary
+      } else if (componentLast < edges.viewportStart) {
         toShow.push(component);
-        if (bottomComponentIndex === 0) {
+        if (lastComponentIndex === 0) {
           this.sendActionOnce('firstReached', {
             item: component,
-            index: bottomComponentIndex
+            index: lastComponentIndex
           });
         }
 
-        // above the lower screen boundary
-      } else if (componentTop < edges.viewportBottom) {
+        // before the last screen boundary
+      } else if (componentFirst < edges.viewportEnd) {
         toShow.push(component);
-        if (bottomComponentIndex === 0) {
+        if (lastComponentIndex === 0) {
           this.sendActionOnce('firstReached', {
             item: component,
-            index: bottomComponentIndex
+            index: lastComponentIndex
           });
         }
-        if (bottomComponentIndex === lastIndex) {
+        if (lastComponentIndex === lastIndex) {
           this.sendActionOnce('lastReached', {
             item: component,
-            index: bottomComponentIndex
+            index: lastComponentIndex
           });
         }
 
-        if (!topVisibleSpotted) {
-          topVisibleSpotted = true;
-          this.set('_firstVisibleIndex', bottomComponentIndex);
+        if (!firstVisibleSpotted) {
+          firstVisibleSpotted = true;
+          this.set('_firstVisibleIndex', lastComponentIndex);
           this.sendActionOnce('firstVisibleChanged', {
             item: component,
-            index: bottomComponentIndex
+            index: lastComponentIndex
           });
         }
         this.sendActionOnce('lastVisibleChanged', {
           item: component,
-          index: bottomComponentIndex
+          index: lastComponentIndex
         });
 
-        // above the lower reveal boundary
-      } else if (componentTop < edges.visibleBottom) {
+        // before the last reveal boundary
+      } else if (componentFirst < edges.visibleEnd) {
         toShow.push(component);
-        if (bottomComponentIndex === lastIndex) {
+        if (lastComponentIndex === lastIndex) {
           this.sendActionOnce('lastReached', {
             item: component,
-            index: bottomComponentIndex
+            index: lastComponentIndex
           });
         }
 
-        // above the lower invisible boundary
-      } else { // (componentTop <= edges.invisibleBottom) {
+        // before the last invisible boundary
+      } else { // (componentFirst <= edges.invisibleEnd) {
         toHide.push(component);
       }
 
-      bottomComponentIndex++;
+      lastComponentIndex++;
     }
 
     toCull = toCull
-      .concat((childComponents.slice(0, topComponentIndex)))
-      .concat(childComponents.slice(bottomComponentIndex));
+      .concat((childComponents.slice(0, firstComponentIndex)))
+      .concat(childComponents.slice(lastComponentIndex));
 
     toCull.forEach((i) => {
       i.cull();
@@ -596,8 +597,8 @@ export default Mixin.create({
     if (this._isFirstRender) {
       this._isFirstRender = false;
       this.sendActionOnce('didMountCollection', {
-        firstVisible: { item: childComponents[topComponentIndex], index: topComponentIndex },
-        lastVisible: { item: childComponents[bottomComponentIndex - 1], index: bottomComponentIndex - 1 }
+        firstVisible: { item: childComponents[firstComponentIndex], index: firstComponentIndex },
+        lastVisible: { item: childComponents[lastComponentIndex - 1], index: lastComponentIndex - 1 }
       });
     }
   },
@@ -811,14 +812,43 @@ export default Mixin.create({
 
     let bufferSize = this.get('bufferSize');
     let rect = this.radar.planet;
-    return {
-      viewportTop: rect.top,
-      visibleTop: (-1 * bufferSize * rect.height) + rect.top,
-      invisibleTop: (-2 * bufferSize * rect.height) + rect.top,
-      viewportBottom: rect.bottom,
-      visibleBottom: (bufferSize * rect.height) + rect.bottom,
-      invisibleBottom: (2 * bufferSize * rect.height) + rect.bottom
-    };
+
+    if (this.dimVertical) {
+      return {
+        viewportStart: rect.top,
+        visibleStart: (-1 * bufferSize * rect.height) + rect.top,
+        invisibleStart: (-2 * bufferSize * rect.height) + rect.top,
+        viewportEnd: rect.bottom,
+        visibleEnd: (bufferSize * rect.height) + rect.bottom,
+        invisibleEnd: (2 * bufferSize * rect.height) + rect.bottom,
+
+        // BEGIN TO REMOVE
+        viewportTop: rect.top,
+        visibleTop: (-1 * bufferSize * rect.height) + rect.top,
+        invisibleTop: (-2 * bufferSize * rect.height) + rect.top,
+        viewportBottom: rect.bottom,
+        visibleBottom: (bufferSize * rect.height) + rect.bottom,
+        invisibleBottom: (2 * bufferSize * rect.height) + rect.bottom
+        // END TO REMOVE
+      };
+    } else {
+      return {
+        viewportStart: rect.left,
+        visibleStart: (-1 * bufferSize * rect.width) + rect.left,
+        invisibleStart: (-2 * bufferSize * rect.width) + rect.left,
+        viewportEnd: rect.right,
+        visibleEnd: (bufferSize * rect.width) + rect.right,
+        invisibleEnd: (2 * bufferSize * rect.width) + rect.right,
+        // BEGIN TO REMOVE
+        viewportTop: rect.top,
+        visibleTop: (-1 * bufferSize * rect.height) + rect.top,
+        invisibleTop: (-2 * bufferSize * rect.height) + rect.top,
+        viewportBottom: rect.bottom,
+        visibleBottom: (bufferSize * rect.height) + rect.bottom,
+        invisibleBottom: (2 * bufferSize * rect.height) + rect.bottom
+        // END TO REMOVE
+      }
+    }
   }),
 
   /*

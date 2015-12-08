@@ -12,6 +12,7 @@ export default Component.extend(OcclusionCollectionMixin, {
   defaultWidth: 200,
   _defaultWidth: null,
   alwaysUseDefaultWidth: false,
+  dimVertical: false,
 
   /*
    * Defaults to `div`.

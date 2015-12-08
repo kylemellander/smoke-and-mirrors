@@ -41,14 +41,42 @@ export default Mixin.create({
 
     this.visualize();
 
-    return {
-      viewportTop: rect.top,
-      visibleTop: (-1 * bufferSize * rect.height) + rect.top,
-      invisibleTop: (-2 * bufferSize * rect.height) + rect.top,
-      viewportBottom: rect.bottom,
-      visibleBottom: (bufferSize * rect.height) + rect.bottom,
-      invisibleBottom: (2 * bufferSize * rect.height) + rect.bottom
-    };
+    if (this.dimVertical) {
+      return {
+        viewportStart: rect.top,
+        visibleStart: (-1 * bufferSize * rect.height) + rect.top,
+        invisibleStart: (-2 * bufferSize * rect.height) + rect.top,
+        viewportEnd: rect.bottom,
+        visibleEnd: (bufferSize * rect.height) + rect.bottom,
+        invisibleEnd: (2 * bufferSize * rect.height) + rect.bottom,
+
+        // BEGIN TO REMOVE
+        viewportTop: rect.top,
+        visibleTop: (-1 * bufferSize * rect.height) + rect.top,
+        invisibleTop: (-2 * bufferSize * rect.height) + rect.top,
+        viewportBottom: rect.bottom,
+        visibleBottom: (bufferSize * rect.height) + rect.bottom,
+        invisibleBottom: (2 * bufferSize * rect.height) + rect.bottom
+        // END TO REMOVE
+      };
+    } else {
+      return {
+        viewportStart: rect.left,
+        visibleStart: (-1 * bufferSize * rect.width) + rect.left,
+        invisibleStart: (-2 * bufferSize * rect.width) + rect.left,
+        viewportEnd: rect.right,
+        visibleEnd: (bufferSize * rect.width) + rect.right,
+        invisibleEnd: (2 * bufferSize * rect.width) + rect.right,
+        // BEGIN TO REMOVE
+        viewportTop: rect.top,
+        visibleTop: (-1 * bufferSize * rect.height) + rect.top,
+        invisibleTop: (-2 * bufferSize * rect.height) + rect.top,
+        viewportBottom: rect.bottom,
+        visibleBottom: (bufferSize * rect.height) + rect.bottom,
+        invisibleBottom: (2 * bufferSize * rect.height) + rect.bottom
+        // END TO REMOVE
+      }
+    }
   }),
 
   _removeComponents(toCull, toHide) {
@@ -86,4 +114,3 @@ export default Mixin.create({
   }
 
 });
-
