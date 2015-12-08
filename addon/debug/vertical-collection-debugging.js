@@ -49,15 +49,6 @@ export default Mixin.create({
         viewportEnd: rect.bottom,
         visibleEnd: (bufferSize * rect.height) + rect.bottom,
         invisibleEnd: (2 * bufferSize * rect.height) + rect.bottom,
-
-        // BEGIN TO REMOVE
-        viewportTop: rect.top,
-        visibleTop: (-1 * bufferSize * rect.height) + rect.top,
-        invisibleTop: (-2 * bufferSize * rect.height) + rect.top,
-        viewportBottom: rect.bottom,
-        visibleBottom: (bufferSize * rect.height) + rect.bottom,
-        invisibleBottom: (2 * bufferSize * rect.height) + rect.bottom
-        // END TO REMOVE
       };
     } else {
       return {
@@ -67,14 +58,6 @@ export default Mixin.create({
         viewportEnd: rect.right,
         visibleEnd: (bufferSize * rect.width) + rect.right,
         invisibleEnd: (2 * bufferSize * rect.width) + rect.right,
-        // BEGIN TO REMOVE
-        viewportTop: rect.top,
-        visibleTop: (-1 * bufferSize * rect.height) + rect.top,
-        invisibleTop: (-2 * bufferSize * rect.height) + rect.top,
-        viewportBottom: rect.bottom,
-        visibleBottom: (bufferSize * rect.height) + rect.bottom,
-        invisibleBottom: (2 * bufferSize * rect.height) + rect.bottom
-        // END TO REMOVE
       }
     }
   }),

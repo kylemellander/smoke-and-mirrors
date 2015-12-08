@@ -87,7 +87,7 @@ export default Mixin.create({
   /*
    * If set, if scrollPosition is empty
    * at initialization, the component will
-   * render starting at the bottom.
+   * render starting at the end.
    */
   renderFromLast: false,
   __isInitializingFromLast: false,
@@ -106,7 +106,7 @@ export default Mixin.create({
    * with the provided id is at the top left
    * on screen.
    *
-   * If the item cannot be found, scrollTop
+   * If the item cannot be found, scrollTop or scrollLeft
    * is set to 0.
    */
   idForFirstItem: null,
@@ -317,8 +317,8 @@ export default Mixin.create({
 
   __smActionCache: null,
   // TO CHANGE
-  __smIsLoadingAbove: false,
-  __smIsLoadingBelow: false,
+  __smIsLoadingBefore: false,
+  __smIsLoadingAfter: false,
   sendActionOnce(name, context) {
     if (!this.canSendActions(name, context)) {
       return;
@@ -362,15 +362,15 @@ export default Mixin.create({
   },
 
   /*
-   Binary search for finding the topmost visible view.
+   Binary search for finding the first visible view.
    This is not the first visible item on screen, but the first
    item that will render it's content.
 
    @method _findFirstRenderedComponent
-   @param {Number} invisibleTop The top/left of the viewport to search against
+   @param {Number} invisibleStart The top/left of the viewport to search against
    @returns {Number} the index into childViews of the first view to render
    **/
-  _findFirstRenderedComponent(invisibleTop) {
+  _findFirstRenderedComponent(invisibleStart) {
     let childComponents = this.get('children');
     let maxIndex = childComponents.length - 1;
     let minIndex = 0;
@@ -387,7 +387,7 @@ export default Mixin.create({
       let component = childComponents[midIndex];
       let componentEnd = this.dimVertical ? component.satellite.geography.bottom : component.satellite.geography.right;
 
-      if (componentEnd > invisibleTop) {
+      if (componentEnd > invisibleStart) {
         maxIndex = midIndex - 1;
       } else {
         minIndex = midIndex + 1;
@@ -478,7 +478,7 @@ export default Mixin.create({
     }
 
     let currentViewportBound = this.dimVertical ? this.radar.skyline.top : this.radar.skyline.left;
-    let currentFirstBound = this.dimVertical ? edges.invisibleTop : edges.invisibleLeft;
+    let currentFirstBound = edges.invisibleStart;
 
     if (currentFirstBound < currentViewportBound) {
       currentFirstBound = currentViewportBound;
@@ -807,7 +807,7 @@ export default Mixin.create({
       return {};
     }
 
-    // segment top break points
+    // segment start break points
     this.radar.planet.setState();
 
     let bufferSize = this.get('bufferSize');
@@ -821,15 +821,6 @@ export default Mixin.create({
         viewportEnd: rect.bottom,
         visibleEnd: (bufferSize * rect.height) + rect.bottom,
         invisibleEnd: (2 * bufferSize * rect.height) + rect.bottom,
-
-        // BEGIN TO REMOVE
-        viewportTop: rect.top,
-        visibleTop: (-1 * bufferSize * rect.height) + rect.top,
-        invisibleTop: (-2 * bufferSize * rect.height) + rect.top,
-        viewportBottom: rect.bottom,
-        visibleBottom: (bufferSize * rect.height) + rect.bottom,
-        invisibleBottom: (2 * bufferSize * rect.height) + rect.bottom
-        // END TO REMOVE
       };
     } else {
       return {
@@ -839,14 +830,6 @@ export default Mixin.create({
         viewportEnd: rect.right,
         visibleEnd: (bufferSize * rect.width) + rect.right,
         invisibleEnd: (2 * bufferSize * rect.width) + rect.right,
-        // BEGIN TO REMOVE
-        viewportTop: rect.top,
-        visibleTop: (-1 * bufferSize * rect.height) + rect.top,
-        invisibleTop: (-2 * bufferSize * rect.height) + rect.top,
-        viewportBottom: rect.bottom,
-        visibleBottom: (bufferSize * rect.height) + rect.bottom,
-        invisibleBottom: (2 * bufferSize * rect.height) + rect.bottom
-        // END TO REMOVE
       }
     }
   }),
