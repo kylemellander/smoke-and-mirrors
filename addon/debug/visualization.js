@@ -28,21 +28,21 @@ export default class Visualization {
     this.telescope.className = 'sm_visualization-telescope';
     this.container.appendChild(this.telescope);
 
-    this.visAbove = document.createElement('div');
-    this.visAbove.className = 'sm_visualization-visible';
-    this.container.appendChild(this.visAbove);
+    this.visBefore = document.createElement('div');
+    this.visBefore.className = 'sm_visualization-visible';
+    this.container.appendChild(this.visBefore);
 
-    this.visBelow = document.createElement('div');
-    this.visBelow.className = 'sm_visualization-visible';
-    this.container.appendChild(this.visBelow);
+    this.visAfter = document.createElement('div');
+    this.visAfter.className = 'sm_visualization-visible';
+    this.container.appendChild(this.visAfter);
 
-    this.hiddenAbove = document.createElement('div');
-    this.hiddenAbove.className = 'sm_visualization-hidden';
-    this.container.appendChild(this.hiddenAbove);
+    this.hiddenBefore = document.createElement('div');
+    this.hiddenBefore.className = 'sm_visualization-hidden';
+    this.container.appendChild(this.hiddenBefore);
 
-    this.hiddenBelow = document.createElement('div');
-    this.hiddenBelow.className = 'sm_visualization-hidden';
-    this.container.appendChild(this.hiddenBelow);
+    this.hiddenAfter = document.createElement('div');
+    this.hiddenAfter.className = 'sm_visualization-hidden';
+    this.container.appendChild(this.hiddenAfter);
 
     document.body.appendChild(this.wrapper);
   }
@@ -94,33 +94,63 @@ export default class Visualization {
     Visualization.applyStyles(this.telescope, planet);
     Visualization.applyStyles(this.sky, skyline);
 
-    Visualization.applyStyles(this.visAbove, {
-      width: planet.width,
-      top: edges.visibleTop,
-      left: planet.left,
-      height: edges.viewportTop - edges.visibleTop
-    });
+    if (this.component.get('dimVertical')) {
+      Visualization.applyStyles(this.visBefore, {
+        width: planet.width,
+        top: edges.visibleStart,
+        left: planet.left,
+        height: edges.viewportStart - edges.visibleStart
+      });
 
-    Visualization.applyStyles(this.visBelow, {
-      width: planet.width,
-      top: edges.viewportBottom,
-      left: planet.left,
-      height: edges.visibleBottom - edges.viewportBottom
-    });
+      Visualization.applyStyles(this.visAfter, {
+        width: planet.width,
+        top: edges.viewportEnd,
+        left: planet.left,
+        height: edges.visibleEnd - edges.viewportEnd
+      });
 
-    Visualization.applyStyles(this.hiddenAbove, {
-      width: planet.width,
-      top: edges.invisibleTop,
-      left: planet.left,
-      height: edges.visibleTop - edges.invisibleTop
-    });
+      Visualization.applyStyles(this.hiddenBefore, {
+        width: planet.width,
+        top: edges.invisibleStart,
+        left: planet.left,
+        height: edges.visibleStart - edges.invisibleStart
+      });
 
-    Visualization.applyStyles(this.hiddenBelow, {
-      width: planet.width,
-      top: edges.visibleBottom,
-      left: planet.left,
-      height: edges.invisibleBottom - edges.visibleBottom
-    });
+      Visualization.applyStyles(this.hiddenAfter, {
+        width: planet.width,
+        top: edges.visibleEnd,
+        left: planet.left,
+        height: edges.invisibleEnd - edges.visibleEnd
+      });
+    } else {
+      Visualization.applyStyles(this.visBefore, {
+        width: edges.viewportStart - edges.visibleStart,
+        top: planet.top,
+        left: edges.visibleStart,
+        height: planet.height
+      });
+
+      Visualization.applyStyles(this.visAfter, {
+        width: edges.visibleEnd - edges.viewportEnd,
+        top: planet.top,
+        left: edges.viewportEnd,
+        height: planet.height
+      });
+
+      Visualization.applyStyles(this.hiddenBefore, {
+        width: edges.visibleStart - edges.invisibleStart,
+        top: planet.top,
+        left: edges.invisibleStart,
+        height: planet.height
+      });
+
+      Visualization.applyStyles(this.hiddenAfter, {
+        width: edges.invisibleEnd - edges.visibleEnd,
+        top: planet.top,
+        left: edges.visibleEnd,
+        height: planet.height
+      });
+    }
   }
 
   makeSatellite() {
