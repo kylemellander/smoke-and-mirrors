@@ -1,1 +1,25 @@
-{{yield}}
+{{#if __smIsLoadingBefore}}
+  {{component loadingBeforeComponent}}
+{{/if}}
+<div style="width: 100%; height: {{__smSpacerBeforeVal}}px;"></div>
+{{#each _content key='@index' as |item index|}}
+  {{#vertical-item
+    itemTagName=itemTagName
+    defaultHeight=defaultHeight
+    alwaysUseDefaultHeight=alwaysUseDefaultHeight
+    content=item
+    index=index
+    register=(action register)
+    unregister=(action unregister)
+  }}
+    {{#if shouldRenderList}}
+      {{yield item index}}
+    {{/if}}
+  {{/vertical-item}}
+{{else}}
+  {{yield to="inverse"}}
+{{/each}}
+<div style="width: 100%; height: {{__smSpacerAfterVal}}px;"></div>
+{{#if __smIsLoadingBelow}}
+  {{component loadingBelowComponent}}
+{{/if}}

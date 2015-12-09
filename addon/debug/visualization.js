@@ -94,7 +94,7 @@ export default class Visualization {
     Visualization.applyStyles(this.telescope, planet);
     Visualization.applyStyles(this.sky, skyline);
 
-    if (this.component.get('dimVertical')) {
+    if (this.component.get('vertical')) {
       Visualization.applyStyles(this.visBefore, {
         width: planet.width,
         top: edges.visibleStart,

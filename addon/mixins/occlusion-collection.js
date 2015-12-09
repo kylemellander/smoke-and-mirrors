@@ -385,7 +385,7 @@ export default Mixin.create({
 
       // in case of not full-window scrolling
       let component = childComponents[midIndex];
-      let componentEnd = this.dimVertical ? component.satellite.geography.bottom : component.satellite.geography.right;
+      let componentEnd = this.vertical ? component.satellite.geography.bottom : component.satellite.geography.right;
 
       if (componentEnd > invisibleStart) {
         maxIndex = midIndex - 1;
@@ -477,7 +477,7 @@ export default Mixin.create({
 
     }
 
-    let currentViewportBound = this.dimVertical ? this.radar.skyline.top : this.radar.skyline.left;
+    let currentViewportBound = this.vertical ? this.radar.skyline.top : this.radar.skyline.left;
     let currentFirstBound = edges.invisibleStart;
 
     if (currentFirstBound < currentViewportBound) {
@@ -496,8 +496,8 @@ export default Mixin.create({
 
       let component = childComponents[lastComponentIndex];
 
-      let componentFirst = this.dimVertical ? component.satellite.geography.top : component.satellite.geography.left;
-      let componentLast = this.dimVertical ? component.satellite.geography.bottom : component.satellite.geography.right;
+      let componentFirst = this.vertical ? component.satellite.geography.top : component.satellite.geography.left;
+      let componentLast = this.vertical ? component.satellite.geography.bottom : component.satellite.geography.right;
 
       // end the loop if we've reached the end of components we care about
       if (componentFirst > edges.invisibleEnd) {
@@ -813,7 +813,7 @@ export default Mixin.create({
     let bufferSize = this.get('bufferSize');
     let rect = this.radar.planet;
 
-    if (this.dimVertical) {
+    if (this.vertical) {
       return {
         viewportStart: rect.top,
         visibleStart: (-1 * bufferSize * rect.height) + rect.top,

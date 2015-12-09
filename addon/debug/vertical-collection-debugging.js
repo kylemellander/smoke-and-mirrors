@@ -41,7 +41,7 @@ export default Mixin.create({
 
     this.visualize();
 
-    if (this.dimVertical) {
+    if (this.vertical) {
       return {
         viewportStart: rect.top,
         visibleStart: (-1 * bufferSize * rect.height) + rect.top,
